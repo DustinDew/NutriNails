@@ -1,10 +1,5 @@
 #Import libraries
 import sys
-import tkinter as tk
-from tkinter import filedialog
-import subprocess
-import os
-import cv2 as cv
 
 # Import modules
 sys.path.append("/home/raspi/developement/project_NutriNails/modules")
