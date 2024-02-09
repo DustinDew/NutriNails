@@ -15,7 +15,6 @@ current_file_directory = os.path.dirname(os.path.abspath(__file__))
 # Relativ paths
 images_dir_path = os.path.join(current_file_directory, "..", "assets/images")
 sounds_dir_path = os.path.join(current_file_directory, "..", "assets/sounds")
-print(str(sounds_dir_path))
 
 def capture_image():
     # Camera configuration
