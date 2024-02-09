@@ -7,6 +7,12 @@ import sys
 # Import modules
 from capture_image_module import capture_image
 
+#Relativ path for system independency
+# Directory of current file
+current_file_directory = os.path.dirname(os.path.abspath(__file__))
+# Path to /modules
+images_dir_path = os.path.join(current_file_directory, "..", "assets/images")
+
 # Function to capture an image
 def on_button_click():
     capture_image()
@@ -35,7 +41,7 @@ def create_gui():
     root.geometry("400x300")
 
     # Define folder path
-    specific_folder_path = "/home/raspi/developement/project_NutriNails/assets/images"
+    specific_folder_path = images_dir_path
 
     # Capture button
     button_run_script = tk.Button(root, text="Capture", command=on_button_click)

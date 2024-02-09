@@ -9,6 +9,14 @@ from datetime import datetime
 from generate_qrCode_module import generate_qr_code
 from generate_hash_module import generate_img_hash
 
+# Relativ path for system independency
+# Directory of current file
+current_file_directory = os.path.dirname(os.path.abspath(__file__))
+# Relativ paths
+images_dir_path = os.path.join(current_file_directory, "..", "assets/images")
+sounds_dir_path = os.path.join(current_file_directory, "..", "assets/sounds")
+print(str(sounds_dir_path))
+
 def capture_image():
     # Camera configuration
     cam_port = 0
@@ -17,8 +25,7 @@ def capture_image():
     cam.set(4, 1080)
 
     # Directory for saving images
-    directory = "/home/raspi/developement/project_NutriNails/assets/images"
-    image_path = directory
+    image_path = images_dir_path
 
     try:
         # Preview window
@@ -47,7 +54,7 @@ def capture_image():
 
         # Initialize and play sound
         pygame.mixer.init()
-        pygame.mixer.music.load("/home/raspi/developement/project_NutriNails/assets/sounds/camera-13695.mp3")
+        pygame.mixer.music.load(os.path.join(sounds_dir_path, "camera.mp3"))
         pygame.mixer.music.play()
 
         # Capture image
