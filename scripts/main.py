@@ -1,8 +1,16 @@
 #Import libraries
 import sys
+import os
 
 # Import modules
-sys.path.append("/home/raspi/developement/project_NutriNails/modules")
+
+# Directory of current file
+current_file_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Path to /modules
+modules_dir_path = os.path.join(current_file_directory, "..", "modules")
+
+sys.path.append(modules_dir_path)
 from gui_modules import create_gui
 
 # Main function to start the program
