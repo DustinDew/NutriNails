@@ -1,4 +1,4 @@
-# NutriNails Project
+# NutriNails Project (OUTDATED)
 
 This project captures images using an external camera and provides a simple GUI to interact with the application.
 
