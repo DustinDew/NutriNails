@@ -1,0 +1,20 @@
+Alle Fingenägel erfassen (4 Fotos)
+Personengebundene Daten erfassen:
+    Name,
+    Fd-Nummer,
+    Email,
+    Alter,
+    Geschlecht,
+    Will Probe geben?
+    Will kontaktiert werden?
+    
+
+Fragebogen auf Tablet (OE estellt)
+
+
+
+
+Hardware:
+    -Tablet (hdmi Eingang)
+    -Kamera
+    -Touchdisplay für raspi pi 4 und 3

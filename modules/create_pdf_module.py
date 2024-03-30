@@ -22,7 +22,7 @@ def create_pdf_with_image(image_path, pdf_dir, pdf_name, text, image_scale_size=
     # Text neben das Bild setzen
     # Text-Offset von der rechten Seite des Bildes
     text_x_position = x_position + scaled_width + text_offset[0]
-    text_y_position = y_position + (scaled_height / 2) + text_offset[1]  # Mittig neben dem Bild
+    text_y_position = y_position + (scaled_height / 2) + text_offset[1]
     c.drawString(text_x_position, text_y_position, text)
     
     # PDF speichern
