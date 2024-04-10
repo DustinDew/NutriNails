@@ -11,7 +11,6 @@ def color_correction(image):
     image_patch = image[h_start:h_start+h_width, w_start:w_start+w_width]
 
     image_normalized = image / image_patch.max(axis=(0, 1))
-    print(image_normalized.max())
 
     image_balanced = image_normalized.clip(0,1)
 

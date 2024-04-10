@@ -1,3 +1,4 @@
+import datetime
 import os
 from datetime import datetime
 import cv2
@@ -13,13 +14,13 @@ current_file_directory = os.path.dirname(os.path.abspath(__file__))
 # Pfad zum Verzeichnis mit Bildern, relativ zum aktuellen Verzeichnis
 images_dir_path = os.path.join(current_file_directory, "..", "assets/images")
 
-def save_image(image, handType):
+def save_image(image, handType, hash_val):
     # Pfad, unter dem das Bild gespeichert werden soll
     image_path = images_dir_path
     # Erzeuge einen einzigartigen Hash für das Bild
     hash = hs.generate_img_hash()
     # Bildname mit aktueller Uhrzeit und Hash erstellen
-    img_name = f"img_{handType}_{datetime.now().time().strftime('%H:%M:%S')}_{hash}.png"
+    img_name = f"img_{handType}_{datetime.now().time().strftime('%H:%M:%S')}_{hash_val}.png"
     # Konvertiere PIL-Image (Python Imaging Library) zu einem OpenCV-Image
     open_cv_image = np.array(image)
     

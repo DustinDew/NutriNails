@@ -10,7 +10,7 @@ current_file_directory = os.path.dirname(os.path.abspath(__file__))
 # Pfad für den Ordner, in dem die Bilder gespeichert werden, relativ zum aktuellen Verzeichnis
 images_dir_path = os.path.join(current_file_directory, "..", "assets/qr_images")
 
-def generate_qr_code(handType):
+def generate_qr_code(handType, hash_val):
     # QR-Code Generator mit spezifizierten Parametern initialisieren
     qr = qrcode.QRCode(
         version=1,  # Version des QR-Codes (1-40) bestimmt die Größe des QR-Codes
@@ -21,7 +21,6 @@ def generate_qr_code(handType):
 
     # Aktuelle Zeit für den Dateinamen formatieren, Sekunden und Mikrosekunden werden ignoriert
     time = datetime.now().replace(second=0, microsecond=0).strftime("%H:%M") + "_"
-    filename = hs.generate_img_hash()  # Generiert einen einzigartigen Hash-Wert für den Dateinamen
     
     # Daten zum QR-Code hinzufügen
     qr.add_data("https://github.com/DustinDew/NutriNails")
@@ -31,7 +30,7 @@ def generate_qr_code(handType):
     img = qr.make_image(fill_color="black", back_color="white")
     
     # Das Bild in einer Datei speichern
-    output_path = os.path.join(images_dir_path, "qr_" + handType +"_" + time + str(filename))
+    output_path = os.path.join(images_dir_path, "qr_" + handType +"_" + time + str(hash_val))
     img.save(output_path)
-    return_arr = [output_path, "qr_" + handType + "_" + time + str(filename)]
+    return_arr = [output_path, "qr_" + handType + "_" + time + str(hash_val)]
     return return_arr

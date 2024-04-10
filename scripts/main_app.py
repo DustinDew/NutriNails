@@ -5,6 +5,8 @@ import sys
 import cv2
 import numpy as np
 
+
+
 # Bestimme das aktuelle Verzeichnis der Datei
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
 # Pfade zu den Unterordnern relativ zur aktuellen Datei
@@ -18,10 +20,67 @@ from finger_tip_tracking_module import ft_tracking
 import save_image_module as si
 import generate_qrCode_module as qr
 import print_label_module as pr
+from generate_hash_module import generate_img_hash
+
+placeholder = st.empty()
 
 def main():
+    st.sidebar.title("Hand Aufnahmen")
     st.title("NutriNails")
-    st.sidebar.title("Funktionen")
+    st.header("Teilnehmer Daten")
+
+    if 'person_data' not in st.session_state:
+            st.session_state.person_data = {
+                "id": "",
+                "name": "",
+                "email": "",
+                "student_id": "",
+                "sex": "",
+                "age": 0,
+                "check_probe": "",
+                "check_contact": "",
+                "RH_img": "",
+                "RT_img": "",
+                "LH_img": "",
+                "LT_img": ""
+            }
+   
+    with st.form("my_form", clear_on_submit= True):
+        name = st.text_input(label="Name")
+        student_id = st.text_input(label="Fd-Nummer")
+        email = st.text_input(label="Email")
+        sex_val = st.multiselect(label="Geschlecht:", options=["männlich", "weiblich", "divers"], max_selections=1, placeholder="Geschlecht wählen", )
+        age = st.slider(label="Alter", min_value=0, max_value=100 ,step=1)
+        check_probe_val = st.checkbox("Will eine Probe geben")
+        check_contact_val = st.checkbox("Möchte kontaktiert werden")
+
+        # Every form must have a submit button.
+        submitted = st.form_submit_button("Teilnehmer abschließen")
+        if submitted:
+            st.session_state.person_data["name"] = name
+            st.session_state.person_data["email"] = email
+            st.session_state.person_data["student_id"] = student_id
+            if len(sex_val) > 0:
+                st.session_state.person_data["gender"] = sex_val[0]
+            st.session_state.person_data["age"] = age
+            st.session_state.person_data["check_probe"] = check_probe_val
+            st.session_state.person_data["check_contact"] = check_contact_val
+            st.write(st.session_state["person_data"])
+            st.session_state.person_data = {
+                "id": "",
+                "name": "",
+                "student_id": "",
+                "gender": "",
+                "age": 0,
+                "check_probe": "",
+                "check_contact": "",
+                "RH_img": "",
+                "RT_img": "",
+                "LH_img": "",
+                "LT_img": ""
+            }
+            st.session_state.current_function = "left_hand"
+        
 
     # Initialisiere eine Session State Variable für die aktuelle Auswahl, falls noch nicht vorhanden
     if 'current_function' not in st.session_state:
@@ -33,29 +92,34 @@ def main():
         "Linke Hand Daumen": "left_thumb",
         "Rechte Hand": "right_hand",
         "Rechte Hand Daumen": "right_thumb",
-        "Handtracking Test": "ht_test",
-        "Bildeinstellungen": "img_settings"
     }
 
     for option, value in sidebar_options.items():
         if st.sidebar.button(option):
             st.session_state.current_function = value
+    st.sidebar.title("Weiter Funktionen")
+    if st.sidebar.button("Handtracking Test"):
+            st.session_state.current_function = "ht_test"
+    if st.sidebar.button("Bildeinstellungen"):
+            st.session_state.current_function = "img_settings"
 
     # Funktionen basierend auf der aktuellen Auswahl ausführen
+    
     if st.session_state.current_function == "left_hand":
         take_and_save_image("Linke Hand", "LH")
     elif st.session_state.current_function == "left_thumb":
-        take_and_save_image("Linke Hand Daumen", "LHD")
+        take_and_save_image("Linke Hand Daumen", "LT")
     elif st.session_state.current_function == "right_hand":
         take_and_save_image("Rechte Hand", "RH")
     elif st.session_state.current_function == "right_thumb":
-        take_and_save_image("Rechte Hand Daumen", "RHD")
+        take_and_save_image("Rechte Hand Daumen", "RT")
     elif st.session_state.current_function == "img_settings":
         manage_img_settigns()
     elif st.session_state.current_function == "ht_test":
         hand_tracking()
+   
     
-    
+
 
 def take_and_save_image(hand_type, label):
     
@@ -69,12 +133,18 @@ def take_and_save_image(hand_type, label):
         st.image(image, caption=f"{hand_type} Aufgenommenes Bild", use_column_width=True)
 
         # Button zum Speichern des Bildes, erscheint nur nach der Bildaufnahme
-        if st.button(f"{hand_type} Bild speichern"):
+        if st.button(f"Bild speichern"):
+            hash_val = generate_img_hash()          
             # Speichere das Bild und führe weitere Aktionen aus
-            si.save_image(image, label)
-            qrcode = qr.generate_qr_code(label)
+            si.save_image(image, label, hash_val)
+            qrcode = qr.generate_qr_code(label, hash_val)
             pr.print_pdf(qrcode[0], qrcode[1])
             st.success(f"{hand_type} Bild und QR-Code erfolgreich in {images_dir_path} gespeichert.")
+            copy_person_data = st.session_state["person_data"]
+            copy_person_data[label + "_img"] = images_dir_path
+            copy_person_data["id"] = hash_val
+            st.session_state["person_data"] = copy_person_data
+
            
 def manage_img_settigns():
     st.title("Kamera-Einstellungen")
