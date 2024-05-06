@@ -1,14 +1,14 @@
 # Bibliotheken importieren
 import qrcode
 import os
-import generate_hash_module as hs  # Modul zum Generieren von Hashes
+import image_service.image_saving_service.generate_hash as hs  # Modul zum Generieren von Hashes
 from datetime import datetime
 
 # Aktuelles Verzeichnis ermitteln
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Pfad für den Ordner, in dem die Bilder gespeichert werden, relativ zum aktuellen Verzeichnis
-images_dir_path = os.path.join(current_file_directory, "..", "assets/qr_images")
+images_dir_path = os.path.join(current_file_directory, "../..", "assets/qr_images")
 
 def generate_qr_code(handType, hash_val):
     # QR-Code Generator mit spezifizierten Parametern initialisieren

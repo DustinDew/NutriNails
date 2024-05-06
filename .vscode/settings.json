@@ -1,5 +1,8 @@
 {
     "python.analysis.extraPaths": [
-        "./modules"
+        "./modules",
+        "./services",
+        "./services/label_printer_service",
+        "./services/label_printer_service"
     ]
 }

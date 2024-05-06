@@ -2,17 +2,16 @@ import datetime
 import os
 from datetime import datetime
 import cv2
-from color_correction_module import color_correction
-import generate_qrCode_module as qr  # Modul zum Generieren von QR-Codes
-import generate_hash_module as hs  # Modul zum Generieren von Hashes
+from image_service.color_correction import color_correction
+
+import image_service.image_saving_service.generate_hash as hs  # Modul zum Generieren von Hashes
 import numpy as np
-from PIL import Image
 
 # Aktuelles Verzeichnis ermitteln
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Pfad zum Verzeichnis mit Bildern, relativ zum aktuellen Verzeichnis
-images_dir_path = os.path.join(current_file_directory, "..", "assets/images")
+images_dir_path = os.path.join(current_file_directory, "../../..", "assets/images")
 
 def save_image(image, handType, hash_val):
     # Pfad, unter dem das Bild gespeichert werden soll
