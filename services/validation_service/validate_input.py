@@ -24,7 +24,7 @@ def val_email(email):
     if email == "":
         return True
 
-    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\.hs-fulda.de$'
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-.]+\.hs-fulda.de$'
     if re.match(pattern, email):
         return True
     return False
@@ -35,6 +35,5 @@ def val_studentID(student_id):
     
     pattern = r'^fd(ai|et|gw|lt|oe|sk|sw|w)\d{1,4}$'
     if re.match(pattern, student_id):
-        number_part = int(re.search(r'\d+$', student_id))
-        return 0 <= number_part <= 9999
+        return True
     return False

@@ -5,37 +5,62 @@ import sys
 import cv2
 import time
 
+## ------ Relative Dateipfade ------ ##
 
-# Bestimme das aktuelle Verzeichnis der Datei
 current_file_directory = os.path.dirname(os.path.abspath(__file__))
-# Pfade zu den Unterordnern relativ zur aktuellen Datei
 images_dir_path = os.path.join(current_file_directory, "..", "assets/images")
 modules_dir_path = os.path.join(current_file_directory, "..", "services")
-
-# Füge den Pfad zu den Modulen zum Systempfad hinzu
 sys.path.append(modules_dir_path)
 
-# Importiere lokale Module
+## ------ Importiere lokale Module ------ ##
+
 from data_service.data_handling import create_dictObj, populate_personData
 from image_service.finger_tip_tracking import ft_tracking
 import image_service.image_saving_service.save_image as si
-import label_printer_service.generate_qrCode as qr
-import label_printer_service.print_label as pr
 from image_service.image_saving_service.generate_hash import generate_img_hash
 from validation_service.validate_input import val_input_data
 
-col1, col2 = st.columns([3, 4])
+## ------ ##
 
 def main():
     st.sidebar.title("Hand Aufnahmen")
 
+    ## ------ Initialisierung der Session-States ------ ##
+
+    if 'current_function' not in st.session_state:
+        st.session_state.current_function = "left_hand"
+
+    if 'cap_image' not in st.session_state:
+         st.session_state.cap_image = None
+
     if 'person_data' not in st.session_state:
             st.session_state.person_data = create_dictObj()
-         
+
+    if 'checkbox_values' not in st.session_state:
+        st.session_state['checkbox_values'] = {"LH" : False, "LT" : False, "RH" : False, "RT" : False}
+      
+     
+    ## ------ Initalisierung Spalten für Seitenlayout ------ ##
+
+    col5, col6 = st.columns([3, 4])
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
+        st.checkbox("Linke Hand", value= st.session_state["checkbox_values"]["LH"], disabled=True)
+    with col2:
+        st.checkbox("Linker Daumen", value= st.session_state["checkbox_values"]["LT"], disabled=True)
+    with col3:
+        st.checkbox("Rechte Hand", value= st.session_state["checkbox_values"]["RH"], disabled=True)
+    with col4:
+        st.checkbox("Rechter Daumen", value= st.session_state["checkbox_values"]["RT"], disabled=True)  
+    
+
+    ## ------ Column mit User-InputData Form ------ ##
+    
+    with col5:
         st.title("NutriNails")
        
-        with st.form("my_form", clear_on_submit= True):
+            
+        with st.form("user_inputData", clear_on_submit= True):
 
             st.write("Teilnehmer Daten:")
             name = st.text_input(label="Name")
@@ -47,38 +72,35 @@ def main():
             check_contact_val = st.checkbox("Möchte kontaktiert werden")
 
             submitted = st.form_submit_button("Teilnehmer abschließen")
-
+            
             if submitted & val_input_data(name, email, student_id):
-               
-                    st.session_state.person_data = populate_personData(name, student_id, email, sex_val, age, check_probe_val, check_contact_val)
-                    
-                    hash_val = generate_img_hash()
-                    qrcode = qr.generate_qr_code(st.session_state.current_function, hash_val)
-                    pr.print_pdf(qrcode[0], qrcode[1], "NutriNails")
-                    
+                if st.session_state['checkbox_values']['LH'] == True & st.session_state['checkbox_values']['LT'] == True & st.session_state['checkbox_values']['RH'] == True & st.session_state['checkbox_values']['RT'] == True:
+                    st.session_state['person_data'] = populate_personData(st.session_state["person_data"], name, student_id, email, sex_val, age, check_probe_val, check_contact_val)
+                            
+                    #hash_val = generate_img_hash()
+                    #qrcode = qr.generate_qr_code(st.session_state.current_function, hash_val)
+                    #pr.print_pdf(qrcode[0], qrcode[1], "NutriNails")
+                    print(st.session_state["person_data"])        
                     st.success("Abschluss erfolgreich!")
+                            
+                    ## ------ Schnittstelle Backend ------ ##
                     
-                    ##Schnittstelle Backend
-                    print("Daten in Datenbank geladen!")
-                    ##
+                    ## ------ ##
 
                     time.sleep(2)
                     st.session_state.person_data = create_dictObj()
                     st.session_state.current_function = "left_hand"
-
-                    st.rerun()
+                    st.session_state['checkbox_values'] = {"LH" : False, "LT" : False, "RH" : False, "RT" : False}
                     
+                    st.rerun()
+                st.error("Bildaufnahmen unvollständig!")
             if val_input_data(name, email, student_id) == False:
-                 st.error("Bitte Angaben überprüfen!")
+                 st.error("Bitte Angaben überprüfen!")     
 
-            
-            
+    
 
-    # Initialisiere eine Session State Variable für die aktuelle Auswahl, falls noch nicht vorhanden
-    if 'current_function' not in st.session_state:
-        st.session_state.current_function = "left_hand"
+    ## ------ Sidebar-Buttons und function-handling ------ ##
 
-    # Sidebar-Buttons für die Funktionen
     sidebar_options = {
         "Linke Hand": "left_hand",
         "Linker Daumen": "left_thumb",
@@ -95,10 +117,7 @@ def main():
     if st.sidebar.button("Bildeinstellungen"):
             st.session_state.current_function = "img_settings"
 
-    with col2:
-        st.title("")
-        st.header("")
-        # Funktionen basierend auf der aktuellen Auswahl ausführen
+    with col6:
         
         if st.session_state.current_function == "left_hand":
             take_and_save_image("Linke Hand", "LH")
@@ -112,35 +131,40 @@ def main():
             manage_img_settigns()
         elif st.session_state.current_function == "ht_test":
             hand_tracking()
-   
-    
 
+## ------ Funktion zum Aufnehmen und Speichern eines Bildes ------ ##
 
 def take_and_save_image(hand_type, label):
-    
-    st.header(f"{hand_type}")
-    # Nutze st.camera_input für die Bildaufnahme
-    captured_image = st.camera_input(f"Klicke, um ein Bild der {hand_type} aufzunehmen")
+    st.title(f"{hand_type}")
+    with st.form("image_capture", clear_on_submit= True): 
+        
+        captured_image = st.camera_input("aufnahme", label_visibility="collapsed")
 
-    if captured_image is not None:
-        # Sobald ein Bild aufgenommen wurde, zeige es an
-        image = Image.open(captured_image)
-        st.image(image, caption=f"{hand_type} Aufgenommenes Bild", use_column_width=True)
-
-        # Button zum Speichern des Bildes, erscheint nur nach der Bildaufnahme
-        if st.button(f"Bild speichern"):
-            hash_val = generate_img_hash()          
-            # Speichere das Bild und führe weitere Aktionen aus
-            si.save_image(image, label, hash_val)
+        if captured_image is not None:
+            st.session_state.cap_image = Image.open(captured_image)
             
-            st.success(f"{hand_type} Bild und QR-Code erfolgreich in {images_dir_path} gespeichert.")
-            copy_person_data = st.session_state["person_data"]
-            copy_person_data[label + "_img"] = images_dir_path
-            copy_person_data["id"] = hash_val
-            st.session_state["person_data"] = copy_person_data
-            
+        if st.form_submit_button(f"Bild speichern"):
+            if captured_image == None:
+                st.error("Kein Bild aufgenommen")
 
-           
+            elif captured_image is not None:
+                hash_val = generate_img_hash()          
+                image_path = si.save_image(st.session_state.cap_image, label, hash_val)
+                
+                st.session_state["checkbox_values"][label] = True     
+                st.session_state["person_data"][label + "_img"] = image_path
+                
+                if label == "LH":
+                    st.session_state.current_function = "left_thumb"
+                elif label == "LT":
+                    st.session_state.current_function = "right_hand"
+                elif label == "RH":
+                    st.session_state.current_function = "right_thumb"
+                
+                st.rerun()
+
+## ------ Funktion zum Ändern der Kameraeinstellungen ------ ##
+
 def manage_img_settigns():
     st.title("Kamera-Einstellungen")
     st.header("Helligkeitseinstellungen")
@@ -158,21 +182,18 @@ def manage_img_settigns():
         cap.release()
         st.success("Änderungen wurden angewendet")
 
+## ------ Funktion zum Tracken der Fingerspitzen ------ ##
+
 def hand_tracking():
     st.title("Handtracking-Demo")
-
-    # Kamera-Input von Streamlit
     image_file = st.camera_input("Nehmen Sie Ihre Hand auf")
 
     if image_file:
-        # Konvertieren des Uploads in ein PIL-Bild
         image_pil = Image.open(image_file)
-
-        # Verarbeiten des Bildes
         processed_image = ft_tracking(image_pil)
-
-        # Anzeigen des verarbeiteten Bildes
         st.image(processed_image, caption="Verarbeitetes Bild")
+
+## ------ Main-Routine ------ ##
 
 if __name__ == "__main__":
     main()

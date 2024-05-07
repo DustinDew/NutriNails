@@ -41,6 +41,6 @@ def print_pdf(img_path, pdf_name, text, printer_name="DYMO_LabelWriter_550"):
     
     # PDF-Datei drucken
     conn.printFile(printer_name, pdf_path, "PDF Druckauftrag", options=print_options)
-    print("Druckauftrag für '{pdf_path}' wurde an '{printer_name}' gesendet.")
+    print("Druckauftrag gesendet")
 
 

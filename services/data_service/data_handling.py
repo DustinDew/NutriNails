@@ -17,8 +17,8 @@ def create_dictObj():
     return data
 
 
-def populate_personData(name, email, student_id, sex, age, check_probe, check_contact):
-    person_data = create_dictObj()
+def populate_personData(personData_obj, name, email, student_id, sex, age, check_probe, check_contact):
+    person_data = personData_obj
     person_data["name"] = name
     person_data["email"] = email
     person_data["student_id"] = student_id

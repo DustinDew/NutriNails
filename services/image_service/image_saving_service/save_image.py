@@ -27,7 +27,8 @@ def save_image(image, handType, hash_val):
     open_cv_image = open_cv_image[:, :, ::-1].copy()
     # Speichere das Bild im angegebenen Pfad
     cc_image = color_correction(open_cv_image)
+    
     cv2.imwrite(os.path.join(image_path, img_name), cc_image)
-
+    return os.path.join(image_path, img_name)
 
         
