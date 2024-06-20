@@ -4,9 +4,11 @@ def val_input_data(name, email, student_id):
     name_result = val_name(name)
     email_result = val_email(email)
     student_id_result = val_studentID(student_id)
-
-    return name_result & email_result & student_id_result
     
+
+    return name_result & email_result & student_id_result 
+    
+
 
 def val_name(name):
     if name == "":

@@ -19,15 +19,15 @@ def save_image(image, handType, hash_val):
     # Erzeuge einen einzigartigen Hash für das Bild
     hash = hs.generate_img_hash()
     # Bildname mit aktueller Uhrzeit und Hash erstellen
-    img_name = f"img_{handType}_{datetime.now().time().strftime('%H:%M:%S')}_{hash_val}.png"
+    img_name = f"img_{hash_val}_{handType}.png"
     # Konvertiere PIL-Image (Python Imaging Library) zu einem OpenCV-Image
     open_cv_image = np.array(image)
     
     # Konvertiere RGB (Rot-Grün-Blau) zu BGR (Blau-Grün-Rot) für OpenCV
     open_cv_image = open_cv_image[:, :, ::-1].copy()
     # Speichere das Bild im angegebenen Pfad
-    cc_image = color_correction(open_cv_image)
-    
+    #cc_image = color_correction(open_cv_image)
+    cc_image = open_cv_image
     cv2.imwrite(os.path.join(image_path, img_name), cc_image)
     return os.path.join(image_path, img_name)
 

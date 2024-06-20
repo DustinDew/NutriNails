@@ -18,19 +18,16 @@ def generate_qr_code(handType, hash_val):
         box_size=10,  # Größe jeder Box/Quadrat im QR-Code
         border=4,  # Breite des Randes um den QR-Code
     )
-
-    # Aktuelle Zeit für den Dateinamen formatieren, Sekunden und Mikrosekunden werden ignoriert
-    time = datetime.now().replace(second=0, microsecond=0).strftime("%H:%M") + "_"
     
     # Daten zum QR-Code hinzufügen
-    qr.add_data("https://github.com/DustinDew/NutriNails")
+    qr.add_data("http://193.174.29.14:8501/?id=" + hash_val)
     qr.make(fit=True)  # QR-Code Größe anpassen, um die Daten zu passen
     
     # QR-Code als Bild generieren, Farben definieren
     img = qr.make_image(fill_color="black", back_color="white")
     
     # Das Bild in einer Datei speichern
-    output_path = os.path.join(images_dir_path, "qr_" + handType +"_" + time + str(hash_val))
+    output_path = os.path.join(images_dir_path, "qr_" + str(hash_val) + ".png")
     img.save(output_path)
-    return_arr = [output_path, "qr_" + handType + "_" + time + str(hash_val)]
+    return_arr = [output_path, "qr_" + str(hash_val) + ".pdf"]
     return return_arr

@@ -14,7 +14,7 @@ def generate_img_hash():
     hasher.update(data.encode("utf-8"))  # Die Daten müssen in Bytes umgewandelt werden
     
     # Die hexadezimale Darstellung der ersten 16 Zeichen des Hashs erhalten
-    img_hash = hasher.hexdigest()[:16]
+    img_hash = hasher.hexdigest()[:8]
     
     # Den hexadezimalen Wert des Hashs zurückgeben
     return img_hash
