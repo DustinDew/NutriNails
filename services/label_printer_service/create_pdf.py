@@ -23,12 +23,12 @@ def create_pdf_with_image(image_path, pdf_dir, pdf_name, text, image_scale_size=
     # Text-Offset von der rechten Seite des Bildes
     text_x_position = x_position + scaled_width + text_offset[0]
     text_y_position = y_position + (scaled_height / 2) + text_offset[1]
-    c.setFont("Helvetica", 8)
-    c.drawString(text_x_position, text_y_position + 20 , "Hochschule Fulda")
+    c.setFont("Helvetica", 6)
+    c.drawString(text_x_position, text_y_position + 18 , "Hochschule Fulda")
     c.setFont("Helvetica", 12)
-    c.drawString(text_x_position, text_y_position , "NutriNAIL")
-    c.setFont("Helvetica", 8)
-    c.drawString(text_x_position, text_y_position - 20, text)
+    c.drawString(text_x_position, text_y_position - 2, "NutriNAIL")
+    c.setFont("Helvetica", 10)
+    c.drawString(text_x_position, text_y_position - 22, text)
     
     # PDF speichern
     c.save()

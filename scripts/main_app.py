@@ -65,6 +65,7 @@ def main():
     
     with col5:
         st.title("NutriNails")
+        
         if st.button("Call API"):
             data = requests.get("https://0.0.0.0:8000/takeImg", verify=False).json()
             st.write(data)
