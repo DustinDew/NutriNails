@@ -10,7 +10,7 @@ current_file_directory = os.path.dirname(os.path.abspath(__file__))
 # Pfad für den Ordner, in dem die Bilder gespeichert werden, relativ zum aktuellen Verzeichnis
 images_dir_path = os.path.join(current_file_directory, "../..", "assets/qr_images")
 
-def generate_qr_code(handType, hash_val):
+def generate_qr_code(hash_val):
     # QR-Code Generator mit spezifizierten Parametern initialisieren
     qr = qrcode.QRCode(
         version=1,  # Version des QR-Codes (1-40) bestimmt die Größe des QR-Codes

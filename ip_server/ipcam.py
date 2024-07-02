@@ -4,9 +4,17 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import pathlib as pathlib
 import os as os
+from datetime import date
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/forward")
+async def index():
+    today = date.today()
+    data = "Today's date:" + str(today)
+    return {"forward": data}
+
 
 html = """
 <!DOCTYPE html>
@@ -23,7 +31,13 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://10.6.7.214:8000/ws");
+
+            // var client = new WebSocket();
+            // client.connect("wss://localhost:8000/ws", null, null, null, {rejectUnauthorized: false});
+            //or depending on the implementation you're using (this applies to Nodejs and web browser implementation:
+            //var ws = new WebSocket("ws://localhost:8000/ws", null, null, null, {rejectUnauthorized: false});
+            
+            var ws = new WebSocket("ws://localhost:8000/ws");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -42,16 +56,31 @@ html = """
 </html>
 """
 
+import websockets
 
 @app.get("/websocket")
 async def get():
     return HTMLResponse(html)
 
+
+import websocket
+
+_websocket: WebSocket
+
+@app.get("/to")
+async def index():
+    await _websocket.send_text(f"tolle Sache das")
+    return {"tojavascript": "result"}
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    global _websocket
+    _websocket = websocket
+    print ("accepting")
     while True:
         data = await websocket.receive_text()
+        print (data)
         await websocket.send_text(f"Message text was: {data}")
 
 
@@ -339,11 +368,7 @@ async def upload(file: UploadFile = File(...)):
 
     return {"message": f"Successfully uploaded {file.filename}"}
 
-#if __name__ == "__main__":
-#   uvicorn.run("fastApp:app", host="0.0.0.0", port=8000, reload=True)
-
-
 if __name__ == "__main__":
-    #uvicorn.run("fastApp:app", host="0.0.0.0", port=8000, reload=True)
-    uvicorn.run("fastApp:app", host="0.0.0.0", port=8000,  reload=True, ssl_keyfile="key.pem", ssl_certfile="cert.pem")
+    uvicorn.run("ipcam:app", host="0.0.0.0", port=8000, reload=True)
+    #uvicorn.run("ipcam:app", host="0.0.0.0", port=8000,  reload=True, ssl_keyfile="key.pem", ssl_certfile="cert.pem")
 
